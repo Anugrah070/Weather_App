@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEATHER</title>
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500&display=swap" rel="stylesheet">
+</head>
+
+
+<body>
+    
+    <div class="upper-section">
+
+        <div class="search">
+        <input id="input-place"type="text" placeholder="Enter city name" spellcheck="false"> 
+        <button id="search-Icon"><img src="images/search-Icon.png" width="30" height="30"></button>
+        </div>
+        <div class="error"></div>
+        <div class="weather">
+
+        <div class="header">
+            <h2 id="Date@Time" ></h2>
+        <img src="images/sun.png" width="150" height="150" id="weather-Icon">
+        <h3 class="description"></h3>
+        <h1 class="temp"></h1>
+        <h2 class="place">Enter city name</h2>
+        </div>
+        
+        <div class="details">
+            <div class="col">
+                    <img src="images/humidity.png" width="70" height="70" >
+                    <p class="humidity"></p>
+                    <p padding="200px">Humidity</p>
+                </div>
+
+                <div class="col">
+                    <img src="images/wind.png" width="70" height="70">
+                    <p class="wind"></p>
+                    <p>Wind</p>
+                </div>
+
+            </div>
+        </div>
+        </div>
+        
+
+
+
+    </div>
+
+</body>
+
+<script>
+    const searchBtn=document.getElementById("search-Icon")
+    const weatherIcon=document.getElementById("weather-Icon")
+    const main=document.querySelector(".upper-section")
+
+    
+
+    const d = new Date()
+    const date=document.getElementById("Date@Time")
+    date.innerHTML=d.toDateString()
+    
+    
+
+    const apiKey="d15770d6dd5c262b5e54486c9cb3ccc2"
+    const apiUrl="https://api.openweathermap.org/data/2.5/weather?units=metric&q="
+
+
+    async function checkweather(city){
+        const response=await fetch(apiUrl+city+`&appid=${apiKey}`)
+        let data=await response.json()
+        console.log(data)
+
+        if(response.status==404){
+            document.querySelector(".error").innerHTML=`Data not found ,Try different city`
+            document.querySelector(".weather").style.display="none"
+        }
+
+        else{
+            let desc=data.weather[0].description
+        document.querySelector(".place").innerHTML=data.name
+        document.querySelector(".temp").innerHTML=Math.round(data.main.temp)+"°C"
+        document.querySelector(".humidity").innerHTML=data.main.humidity+"%"
+        document.querySelector(".wind").innerHTML=data.wind.speed+"km/h"
+        document.querySelector(".description").innerHTML=desc[0].toUpperCase()+desc.slice(1)
+
+        if (data.weather[0].main=="Clouds"){
+            weatherIcon.src="images/cloudy.png"
+            main.style.background="linear-gradient(24deg, rgb(232 157 50), rgb(132 189 226))"
+        }
+
+        else if (data.weather[0].main=="Thunderstorm"){
+            weatherIcon.src="images/storm.png"
+            main.style.background="linear-gradient(24deg, rgb(57 66 67), rgb(172 185 192))"
+        }
+
+        else if (data.weather[0].main=="Drizzle"){
+            weatherIcon.src="images/drizzle.png"
+            main.style.background="linear-gradient(126deg , #151533, #748cf1)"
+        }
+
+        else if (data.weather[0].main=="Rain"){
+            weatherIcon.src="images/rain.png"
+            main.style.background="linear-gradient(24deg, rgb(57 66 67), rgb(172 185 192))"
+
+        }
+
+
+        else if (data.weather[0].main=="Clear"){
+            weatherIcon.src="images/sun.png"
+            main.style.background="linear-gradient(24deg, rgb(250 86 32), rgb(245 202 110 / 86%))"   
+            }
+
+
+        else if (data.weather[0].main=="Snow"){
+            weatherIcon.src="images/snow.png"
+            main.style.background="linear-gradient(126deg , #f2efdc, #f5f5f5)"
+            
+        }
+        }
+
+
+    }
+    
+
+    searchBtn.addEventListener("click",function(){
+        let place=document.getElementById("input-place")
+        checkweather(place.value)
+
+    })
+
+
+    
+
+    
+
+    
+</script>
+
+</html>
